@@ -2,10 +2,9 @@
 
 const express = require('express');
 const app = express();
-const port = 3000;
 
-app.get('/', (req, res) => {
-    res.send('Hello World!');
-});
+const chatbot = require('./routes/chatbot');
+
+app.use('/', chatbot);
 
 app.listen(3000);
