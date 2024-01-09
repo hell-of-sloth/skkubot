@@ -1,0 +1,15 @@
+{
+  "name": "skkubot",
+  "version": "1.0.0",
+  "description": "RAG 기반 AI 채팅 봇",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "selenium-webdriver": "^4.16.0"
+  }
+}
