@@ -5,7 +5,7 @@
     database 
   (vector store)
 */
-process.env.OPENAI_API_KEY="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"; 
+process.env.OPENAI_API_KEY="sk-XgYPOB4dR"; 
 
 import { ChatOpenAI } from "langchain/chat_models/openai";
 import { OpenAIEmbeddings } from "langchain/embeddings/openai";
@@ -14,12 +14,14 @@ import {
   RunnableSequence,
   RunnablePassthrough,
 } from "langchain/schema/runnable";
-import { MemoryVectorStore } from "langchain/vectorstores/memory";
 import { StringOutputParser } from "langchain/schema/output_parser";
-import { ScoreThresholdRetriever } from "langchain/retrievers/score_threshold";
 import { Chroma } from "@langchain/community/vectorstores/chroma";
 import { ChromaClient } from "chromadb";
 import { TextLoader } from "langchain/document_loaders/fs/text";
+
+const client = new ChromaClient({
+  path: "http://localhost:8000"
+});
 
 const model = new ChatOpenAI({});
 
