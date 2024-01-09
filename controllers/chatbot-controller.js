@@ -4,7 +4,7 @@ function getChatbot(req, res, next) {
 }
 
 function postChatbot(req, res, next) {
-    // 기능 넣기
+  // 기능 넣기
 }
 
 module.exports = {

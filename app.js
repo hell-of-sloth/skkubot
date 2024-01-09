@@ -3,8 +3,8 @@
 const express = require('express');
 const app = express();
 
-const chatbot = require('./routes/chatbot');
+const chatbotRouter = require('./routes/chatbot');
 
-app.use('/', chatbot);
+app.use(chatbotRouter.routes);
 
 app.listen(3000);
