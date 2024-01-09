@@ -47,6 +47,7 @@ const run = async () => {
       const url = await aTagElement.getAttribute("href");
       urls.push(url);
     }
+    // TODO: promise.all로 병렬처리를 하면 더 효율적으로 처리할 수 있음.
     for (let url of urls) {
       await driver.get(url);
       await driver.wait(until.elementLocated(By.css("div.container")), 10000);
