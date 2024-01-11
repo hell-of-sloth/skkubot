@@ -1,5 +1,15 @@
 const { Builder, By, Key, until } = require("selenium-webdriver");
 const chrome = require("selenium-webdriver/chrome");
+const fs = require('fs');
+const path = require('path');
+
+// 현재 작업 디렉토리에 'download' 디렉토리의 경로를 생성합니다.
+const downloadDir = path.join(__dirname, 'download');
+
+// 'download' 디렉토리가 존재하는지 확인하고, 없으면 생성합니다.
+if (!fs.existsSync(downloadDir)){
+    fs.mkdirSync(downloadDir);
+}
 
 const run = async () => {
   // headless로 크롬 드라이버 실행
@@ -9,6 +19,7 @@ const run = async () => {
       new chrome.Options()
         .headless()
         .addArguments("--disable-gpu", "window-size=1920x1080", "lang=ko_KR")
+        .setUserPreferences({ 'download.default_directory': downloadDir })
     )
     .build();
 
@@ -60,11 +71,41 @@ const run = async () => {
         .findElement(By.css("pre.pre"))
         .getText();
       console.log("내용: " + contentText);
+      
+      // 파일 다운로드
+      const fileElement = await driver.findElement(By.css("a.file"));
+      const isFileExist = await fileElement
+        .findElement(By.css("span"))
+        .getText();
+      
+      // 파일이 존재하면 다운로드
+      if (isFileExist != "( 0 )") {
+        fileElement.click();
+
+        // 압축으로 다운 받기
+        /*
+        const downloadElement = await driver.findElement(By.css("ul.filedown_btnList"))
+          .findElement(By.css("li"))
+          .findElement(By.css("button"));
+        await downloadElement.click();
+        */
+
+        // 파일 하나씩 다운 받기
+        const downloadElements = await driver.findElement(By.css("ul.filedown_list"))
+          .findElements(By.css("li"));
+        for (let content of downloadElements) {
+          await content.findElement(By.css("a")).click();
+        }
+      }
     }
+    // 파일 다운 때매 마지막에 3초간 대기
+    // 파일 다운을 감지해서 끝내는 기능 연구해보기
+    await driver.sleep(3 * 1000);
   } catch (e) {
     console.log(e);
   } finally {
     driver.quit();
   }
 };
+
 run();
