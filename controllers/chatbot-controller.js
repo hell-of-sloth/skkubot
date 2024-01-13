@@ -25,8 +25,17 @@ async function postChatbot(req, res, next) {
   });
 }
 
+function postDeleteDB(req,res,next){
+  chatbotAI.resetDB();
+  res.render("chatbot",{
+    question : '',
+    answer : ''
+  });
+}
+
 module.exports = {
     getChatbot,
     postChatbot,
-    postVectorDB
+    postVectorDB,
+    postDeleteDB
 };

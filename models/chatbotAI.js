@@ -69,8 +69,16 @@ console.log(result);
 return result;
 }
 
+async function resetDB(){
+  await client.deleteCollection({name: "skkubot"})
+const collections = await client.listCollections();
+
+console.log(collections)
+}
+
 module.exports = {
   initvectordb:initvectordb,
   askAI:askAI,
+  resetDB:resetDB
 };
 
