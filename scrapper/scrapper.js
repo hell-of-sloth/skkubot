@@ -58,7 +58,65 @@ const run = async () => {
       const url = await aTagElement.getAttribute("href");
       urls.push(url);
     }
-    // TODO: promise.all로 병렬처리를 하면 더 효율적으로 처리할 수 있음.
+
+    // Promise.allSettled를 사용하여 모든 Promise가 처리될 때까지 기다린다.
+
+    // *************현재 문제 발생으로 인하여 보류*************
+
+    // Promise.allSettled(urls.map(async (url) => {
+    //   await driver.get(url);
+    //   await driver.wait(until.elementLocated(By.css("div.container")), 10000);
+
+    //   const boardElement = await driver.findElement(
+    //     By.css("dl.board-write-box.board-write-box-v03")
+    //   );
+    //   try { // 기본 양식
+    //     const contentText = await boardElement
+    //       .findElement(By.css("dd"))
+    //       .findElement(By.css("pre.pre"))
+    //       .getText();
+    //     console.log("내용: " + contentText);
+    //   } catch (e) { // 기본양식이 아닐 경우
+    //     const contentTextList = await driver.findElement(By.css("div.fr-view"))
+    //       .findElements(By.css("p"))
+    //     console.log("내용: ");
+    //     Promise.allSettled(contentTextList.map(async (contentText) => {
+    //       console.log(await contentText.getText());
+    //     }));
+    //   }
+      
+    //   // 파일 다운로드
+    //   const fileElement = await driver.findElement(By.css("a.file"));
+    //   const isFileExist = await fileElement
+    //     .findElement(By.css("span"))
+    //     .getText();
+      
+    //   // 파일이 존재하면 다운로드
+    //   if (isFileExist != "( 0 )") {
+    //     fileElement.click();
+
+    //     // 압축으로 다운 받기
+    //     /*
+    //     const downloadElement = await driver.findElement(By.css("ul.filedown_btnList"))
+    //       .findElement(By.css("li"))
+    //       .findElement(By.css("button"));
+    //     await downloadElement.click();
+    //     */
+
+    //     // 파일 하나씩 다운 받기
+    //     const downloadElements = await driver.findElement(By.css("ul.filedown_list"))
+    //       .findElements(By.css("li"));
+    //     for (let content of downloadElements) {
+    //       await content.findElement(By.css("a")).click();
+    //     }
+    //   }
+    // })).then((result) => {
+    //   console.log(result);
+    // }).catch((e) => {
+    //   console.log(e);
+    // });
+
+    // 기존 방식
     for (let url of urls) {
       await driver.get(url);
       await driver.wait(until.elementLocated(By.css("div.container")), 10000);
@@ -66,11 +124,20 @@ const run = async () => {
       const boardElement = await driver.findElement(
         By.css("dl.board-write-box.board-write-box-v03")
       );
-      const contentText = await boardElement
-        .findElement(By.css("dd"))
-        .findElement(By.css("pre.pre"))
-        .getText();
-      console.log("내용: " + contentText);
+      try { // 기본 양식
+        const contentText = await boardElement
+          .findElement(By.css("dd"))
+          .findElement(By.css("pre.pre"))
+          .getText();
+        console.log("내용: " + contentText);
+      } catch (e) { // 기본양식이 아닐 경우
+        const contentTextList = await driver.findElement(By.css("div.fr-view"))
+          .findElements(By.css("p"))
+        console.log("내용: ");
+        Promise.allSettled(contentTextList.map(async (contentText) => {
+          console.log(await contentText.getText());
+        }));
+      }
       
       // 파일 다운로드
       const fileElement = await driver.findElement(By.css("a.file"));
@@ -98,9 +165,6 @@ const run = async () => {
         }
       }
     }
-    // 파일 다운 때매 마지막에 3초간 대기
-    // 파일 다운을 감지해서 끝내는 기능 연구해보기
-    await driver.sleep(3 * 1000);
   } catch (e) {
     console.log(e);
   } finally {
