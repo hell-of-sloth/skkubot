@@ -1,12 +1,14 @@
-const chatbotAI = require('../models/chatbotAI');
+const chatbotAI = require("../models/chatbotAI");
 
 function getChatbot(req, res, next) {
   res.render("chatbot");
 }
 
-function postChatbot(req, res, next) {
+async function postChatbot(req, res, next) {
   const question = req.body.inputString;
   console.log(question)
+  await chatbotAI.addvectordb()
+  chatbotAI.askAI()
   res.redirect("/");
 }
 
