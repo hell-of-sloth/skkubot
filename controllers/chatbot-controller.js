@@ -1,10 +1,13 @@
+const chatbotAI = require('../models/chatbotAI');
 
 function getChatbot(req, res, next) {
-  // 기능 넣기
+  res.render("chatbot");
 }
 
 function postChatbot(req, res, next) {
-  // 기능 넣기
+  const question = req.body.inputString;
+  console.log(question)
+  res.redirect("/");
 }
 
 module.exports = {
