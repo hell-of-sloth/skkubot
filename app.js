@@ -9,6 +9,7 @@ app.set("views", "views");
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: false }));
 
+/****************************/
 const {Pool}= require('pg');
 const pg = new Pool({
     user:'postgres',
@@ -24,6 +25,7 @@ pg.connect(err=>{
         console.log("db connected");
     }
 })
+/****************************/ //일단 postgresql 널으래서 넣긴 했는데 아무 기능 없음
 
 const chatbotRouter = require('./routes/chatbot');
 

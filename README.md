@@ -25,3 +25,31 @@ RAG 기반 AI 채팅 봇
 
 - `cd scrapper`
 - `node scrapper.js`
+
+# AI 실행법
+
+## chromadb 설치
+출처: https://github.com/ahmedmusawir/chroma-db-installation-docker/blob/main/README.md
+
+Clone the Chroma repository:
+```
+git clone https://github.com/chroma-core/chroma
+cd chroma
+docker-compose up -d --build
+```
+
+Test with Docker to ensure the server is running:
+```
+docker ps
+```
+
+You should see `chroma-server-1` running.
+
+## openai key
+.env 파일만들고 안에 OPENAI_API_KEY="my key"
+
+## 사용
+db에 아무것도 없는 상태로 질문하면 오류남
+example.txt, example1.txt, example2.txt
+중 하나는 DB에 추가하고 질문하기
+

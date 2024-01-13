@@ -29,20 +29,20 @@ const model = new ChatOpenAI({
 });
 let vectorStore;
 
-async function initvectordb(userinput) {
+async function initvectordb(userinput) { //vectorDB에 들어갈 txt 파일 경로 변수로 받음
   // Create docs with a loader
   const loader = new TextLoader(userinput);
   const docs = await loader.load();
 
   // Create vector store and index the docs
-  vectorStore = await Chroma.fromDocuments(docs, new OpenAIEmbeddings(), {
+  vectorStore = await Chroma.fromDocuments(docs, new OpenAIEmbeddings(), { //collection이 없으면 생성 있으면 추가해줌
     collectionName: "skkubot",
     url: "http://localhost:8000", // Optional, will default to this value
     collectionMetadata: {
       "hnsw:space": "cosine",
-    }, // Optional, can be used to specify the distance method of the embedding space https://docs.trychroma.com/usage-guide#changing-the-distance-function
+    }, 
   });
-}
+} //결국 scrapper로 각 공지사항 TXT파일로 만들어서 이 함수 반복해서 돌리는 것도 방법일듯
 
 async function askAI(userinput){
 
