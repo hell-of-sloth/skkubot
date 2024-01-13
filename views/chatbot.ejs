@@ -7,11 +7,19 @@
 </head>
 <body>
     <h1>Skkubot!</h1>
-    <form action="/" method="post">
-        <label for="inputString">Enter Question:</label>
-        <input type="text" id="inputString" name="inputString" required>
+    <form action="/add-to-db" method="post">
+        <label for="filename">Enter filename(to add to vectordb):</label>
+        <input type="text" id="filename" name="filename" required>
         <button type="submit">Submit</button>
     </form>
+    <form action="/question" method="post">
+        <label for="question">Enter Question:</label>
+        <input type="text" id="question" name="question" required>
+        <button type="submit">Submit</button>
     </form>
+    <hr>
+    <h1>Chatbot Response</h1>
+    <p>Question: <%= question %></p>
+    <p>Answer: <%= answer %></p>
 </body>
 </html>

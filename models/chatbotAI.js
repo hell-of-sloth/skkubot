@@ -29,14 +29,14 @@ const model = new ChatOpenAI({
 });
 let vectorStore;
 
-async function addvectordb() {
+async function initvectordb(userinput) {
   // Create docs with a loader
-  const loader = new TextLoader("example.txt");
+  const loader = new TextLoader(userinput);
   const docs = await loader.load();
 
   // Create vector store and index the docs
   vectorStore = await Chroma.fromDocuments(docs, new OpenAIEmbeddings(), {
-    collectionName: "a-test-collection",
+    collectionName: "skkubot",
     url: "http://localhost:8000", // Optional, will default to this value
     collectionMetadata: {
       "hnsw:space": "cosine",
@@ -44,7 +44,7 @@ async function addvectordb() {
   });
 }
 
-async function askAI(){
+async function askAI(userinput){
 
 const prompt =
   PromptTemplate.fromTemplate(`Answer the question based only on the following context:
@@ -63,13 +63,14 @@ const chain = RunnableSequence.from([
   new StringOutputParser(),
 ]);
 
-const result = await chain.invoke("성적 우수 장학금 신청해야하는 학과는?");
+const result = await chain.invoke(userinput);
 
 console.log(result);
+return result;
 }
 
 module.exports = {
-  addvectordb:addvectordb,
+  initvectordb:initvectordb,
   askAI:askAI,
 };
 
