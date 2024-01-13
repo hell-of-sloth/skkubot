@@ -5,7 +5,9 @@
     database 
   (vector store)
 */
-process.env.OPENAI_API_KEY="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"; 
+
+require('dotenv').config();
+const apiKey = process.env.OPENAI_API_KEY;
 
 const ChatOpenAI = require("langchain/chat_models/openai").ChatOpenAI;
 const OpenAIEmbeddings = require("langchain/embeddings/openai").OpenAIEmbeddings;
@@ -22,7 +24,9 @@ const { TextLoader } = require("langchain/document_loaders/fs/text");
 const client = new ChromaClient({
   path: "http://localhost:8000"
 });
-const model = new ChatOpenAI({});
+const model = new ChatOpenAI({
+  apiKey: apiKey
+});
 let vectorStore;
 
 async function addvectordb() {
