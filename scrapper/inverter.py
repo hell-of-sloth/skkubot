@@ -3,6 +3,7 @@ import os # os 패키지 설치 필요
 import fitz # PyMuPDF 패키지 설치 필요
 import docx # python-docx 패키지 설치 필요
 from pptx import Presentation # python-pptx 패키지 설치 필요
+from win32com import client # pywin32 패키지 설치 필요
 
 
 def fileInverter():
@@ -20,6 +21,9 @@ def fileInverter():
     # 한글, PDF, Word, PPT 파일을 txt 파일로 변환
     path = os.path.dirname(os.path.abspath(__file__)) 
     folder_path = path + "\download"
+
+    word = client.Dispatch("Word.Application")
+    word.Visible = False
 
     for file in os.listdir(folder_path):
         
@@ -43,7 +47,7 @@ def fileInverter():
                 txt_f.write(text)
             txt_f.close()
             
-        # Word 파일
+        # Word 파일 .docx
         if file.endswith(".docx"):
             txt_f = open(txt_path + "\\" + file + ".txt", 'w', encoding='UTF-8')
             filename = os.path.join(folder_path, file)
@@ -63,4 +67,15 @@ def fileInverter():
                         txt_f.write(shape.text)
             txt_f.close()
         
+        # Word 파일 .doc
+        if file.endswith(".doc"):
+            txt_f = open(txt_path + "\\" + file + ".txt", 'w', encoding='UTF-8')
+            filename = os.path.join(folder_path, file)
+            doc = word.Documents.Open(filename)
+            txt_f.write(doc.Content.Text)
+            doc.Close()
+            txt_f.close()
+            
+    word.Quit()
+    
 fileInverter()
