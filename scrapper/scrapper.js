@@ -18,7 +18,8 @@ const run = async () => {
     .setChromeOptions(
       new chrome.Options()
         .headless()
-        .addArguments("--disable-gpu", "window-size=1920x1080", "lang=ko_KR")
+        // "--no-sandbox", "--disable-dev-shm-usage" 옵션은 리눅스 환경에서 필요한 옵션입니다.
+        .addArguments("--disable-gpu", "window-size=1920x1080", "lang=ko_KR", "--no-sandbox", "--disable-dev-shm-usage")
         .setUserPreferences({ 'download.default_directory': downloadDir })
     )
     .build();

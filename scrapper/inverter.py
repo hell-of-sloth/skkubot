@@ -1,9 +1,9 @@
 import olefile # olefile 패키지 설치 필요
-import os # os 패키지 설치 필요
+import os
 import fitz # PyMuPDF 패키지 설치 필요
 import docx # python-docx 패키지 설치 필요
 from pptx import Presentation # python-pptx 패키지 설치 필요
-from win32com import client # pywin32 패키지 설치 필요
+import subprocess
 
 
 def fileInverter():
@@ -71,10 +71,17 @@ def fileInverter():
             if file.endswith(".doc"):
                 txt_f = open(txt_path + "\\" + file + ".txt", 'w', encoding='UTF-8')
                 filename = os.path.join(folder_path, file)
-                doc = word.Documents.Open(filename)
-                txt_f.write(doc.Content.Text)
-                doc.Close()
-                txt_f.close()
+                # doc = word.Documents.Open(filename)
+                # txt_f.write(doc.Content.Text)
+                # doc.Close()
+                # txt_f.close()
+                
+                try:
+                    # unoconv 명령어 실행
+                    subprocess.run(["unoconv", "-f", "txt", "-o", txt_f, filename])
+
+                except Exception as e:
+                    print(f"에러 발생: {e}")
                 
             print("Success: " + file)
         except:
