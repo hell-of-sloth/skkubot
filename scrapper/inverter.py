@@ -9,7 +9,7 @@ import subprocess
 def fileInverter():
     
     # txt 파일 저장할 폴더 생성
-    txt_path = os.path.dirname(os.path.abspath(__file__)) + "\\txt_files"
+    txt_path = os.path.dirname(os.path.abspath(__file__)) + "/txt_files"
 
     try:
         if not os.path.exists(txt_path):
@@ -20,16 +20,13 @@ def fileInverter():
         
     # 한글, PDF, Word, PPT 파일을 txt 파일로 변환
     path = os.path.dirname(os.path.abspath(__file__)) 
-    folder_path = path + "\download"
-
-    word = client.Dispatch("Word.Application")
-    word.Visible = False
+    folder_path = path + "/download"
 
     for file in os.listdir(folder_path):
         try:
             # 한글 파일 .hwp
             if file.endswith(".hwp"):
-                txt_f = open(txt_path + "\\" + file + ".txt", 'w', encoding='UTF-8')
+                txt_f = open(txt_path + "/" + file + ".txt", 'w', encoding='UTF-8')
                 filename = os.path.join(folder_path, file)
                 f = olefile.OleFileIO(filename)
                 encoded_text = f.openstream('PrvText').read()
@@ -39,7 +36,7 @@ def fileInverter():
                 
             # PDF 파일 .pdf
             if file.endswith(".pdf"):
-                txt_f = open(txt_path + "\\" + file + ".txt", 'w', encoding='UTF-8')
+                txt_f = open(txt_path + "/" + file + ".txt", 'w', encoding='UTF-8')
                 filename = os.path.join(folder_path, file)
                 pdf = fitz.open(filename)
                 for page in pdf:
@@ -49,7 +46,7 @@ def fileInverter():
                 
             # Word 파일 .docx
             if file.endswith(".docx"):
-                txt_f = open(txt_path + "\\" + file + ".txt", 'w', encoding='UTF-8')
+                txt_f = open(txt_path + "/" + file + ".txt", 'w', encoding='UTF-8')
                 filename = os.path.join(folder_path, file)
                 doc = docx.Document(filename)
                 for para in doc.paragraphs:
@@ -58,7 +55,7 @@ def fileInverter():
                 
             # PPT 파일 .pptx
             if file.endswith(".pptx"):
-                txt_f = open(txt_path + "\\" + file + ".txt", 'w', encoding='UTF-8')
+                txt_f = open(txt_path + "/" + file + ".txt", 'w', encoding='UTF-8')
                 filename = os.path.join(folder_path, file)
                 ppt = Presentation(filename)
                 for slide in ppt.slides:
@@ -67,26 +64,9 @@ def fileInverter():
                             txt_f.write(shape.text)
                 txt_f.close()
             
-            # Word 파일 .doc
-            if file.endswith(".doc"):
-                txt_f = open(txt_path + "\\" + file + ".txt", 'w', encoding='UTF-8')
-                filename = os.path.join(folder_path, file)
-                # doc = word.Documents.Open(filename)
-                # txt_f.write(doc.Content.Text)
-                # doc.Close()
-                # txt_f.close()
-                
-                try:
-                    # unoconv 명령어 실행
-                    subprocess.run(["unoconv", "-f", "txt", "-o", txt_f, filename])
-
-                except Exception as e:
-                    print(f"에러 발생: {e}")
                 
             print("Success: " + file)
         except:
             print("Error: " + file)
-            
-    word.Quit()
-    
+
 fileInverter()

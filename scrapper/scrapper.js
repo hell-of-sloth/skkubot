@@ -27,7 +27,7 @@ const run = async () => {
   try {
     // 특정 URL 생성
     await driver.get(
-      "https://www.skku.edu/skku/campus/skk_comm/notice01.do?mode=list&&articleLimit=10&article.offset=0"
+      "https://www.skku.edu/skku/campus/skk_comm/notice01.do?mode=list&&articleLimit=10&article.offset=10"
     );
     let userAgent = await driver.executeScript("return navigator.userAgent;");
     console.log("[UserAgent]: ", userAgent);
