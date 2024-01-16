@@ -26,55 +26,59 @@ def fileInverter():
     word.Visible = False
 
     for file in os.listdir(folder_path):
-        
-        # 한글 파일
-        if file.endswith(".hwp"):
-            txt_f = open(txt_path + "\\" + file + ".txt", 'w', encoding='UTF-8')
-            filename = os.path.join(folder_path, file)
-            f = olefile.OleFileIO(filename)
-            encoded_text = f.openstream('PrvText').read()
-            decoded_text = encoded_text.decode('UTF-16')
-            txt_f.write(decoded_text)
-            txt_f.close()
+        try:
+            # 한글 파일 .hwp
+            if file.endswith(".hwp"):
+                txt_f = open(txt_path + "\\" + file + ".txt", 'w', encoding='UTF-8')
+                filename = os.path.join(folder_path, file)
+                f = olefile.OleFileIO(filename)
+                encoded_text = f.openstream('PrvText').read()
+                decoded_text = encoded_text.decode('UTF-16')
+                txt_f.write(decoded_text)
+                txt_f.close()
+                
+            # PDF 파일 .pdf
+            if file.endswith(".pdf"):
+                txt_f = open(txt_path + "\\" + file + ".txt", 'w', encoding='UTF-8')
+                filename = os.path.join(folder_path, file)
+                pdf = fitz.open(filename)
+                for page in pdf:
+                    text = page.get_text()
+                    txt_f.write(text)
+                txt_f.close()
+                
+            # Word 파일 .docx
+            if file.endswith(".docx"):
+                txt_f = open(txt_path + "\\" + file + ".txt", 'w', encoding='UTF-8')
+                filename = os.path.join(folder_path, file)
+                doc = docx.Document(filename)
+                for para in doc.paragraphs:
+                    txt_f.write(para.text)
+                txt_f.close()
+                
+            # PPT 파일 .pptx
+            if file.endswith(".pptx"):
+                txt_f = open(txt_path + "\\" + file + ".txt", 'w', encoding='UTF-8')
+                filename = os.path.join(folder_path, file)
+                ppt = Presentation(filename)
+                for slide in ppt.slides:
+                    for shape in slide.shapes:
+                        if hasattr(shape, "text"):
+                            txt_f.write(shape.text)
+                txt_f.close()
             
-        # PDF 파일
-        if file.endswith(".pdf"):
-            txt_f = open(txt_path + "\\" + file + ".txt", 'w', encoding='UTF-8')
-            filename = os.path.join(folder_path, file)
-            pdf = fitz.open(filename)
-            for page in pdf:
-                text = page.get_text()
-                txt_f.write(text)
-            txt_f.close()
-            
-        # Word 파일 .docx
-        if file.endswith(".docx"):
-            txt_f = open(txt_path + "\\" + file + ".txt", 'w', encoding='UTF-8')
-            filename = os.path.join(folder_path, file)
-            doc = docx.Document(filename)
-            for para in doc.paragraphs:
-                txt_f.write(para.text)
-            txt_f.close()
-            
-        # PPT 파일
-        if file.endswith(".pptx"):
-            txt_f = open(txt_path + "\\" + file + ".txt", 'w', encoding='UTF-8')
-            filename = os.path.join(folder_path, file)
-            ppt = Presentation(filename)
-            for slide in ppt.slides:
-                for shape in slide.shapes:
-                    if hasattr(shape, "text"):
-                        txt_f.write(shape.text)
-            txt_f.close()
-        
-        # Word 파일 .doc
-        if file.endswith(".doc"):
-            txt_f = open(txt_path + "\\" + file + ".txt", 'w', encoding='UTF-8')
-            filename = os.path.join(folder_path, file)
-            doc = word.Documents.Open(filename)
-            txt_f.write(doc.Content.Text)
-            doc.Close()
-            txt_f.close()
+            # Word 파일 .doc
+            if file.endswith(".doc"):
+                txt_f = open(txt_path + "\\" + file + ".txt", 'w', encoding='UTF-8')
+                filename = os.path.join(folder_path, file)
+                doc = word.Documents.Open(filename)
+                txt_f.write(doc.Content.Text)
+                doc.Close()
+                txt_f.close()
+                
+            print("Success: " + file)
+        except:
+            print("Error: " + file)
             
     word.Quit()
     
