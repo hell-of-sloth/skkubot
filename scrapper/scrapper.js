@@ -22,7 +22,7 @@ const run = async () => {
         .addArguments("--disable-gpu", "window-size=1920x1080", "lang=ko_KR", "--no-sandbox", "--disable-dev-shm-usage")
         .setUserPreferences({ 'download.default_directory': downloadDir })
     )
-    .setChromeService(new chrome.ServiceBuilder('/bin/chromedriver'))
+    .setChromeService(new chrome.ServiceBuilder('/bin/chromedriver')) // WSL에서 chromedriver 경로를 지정해줍니다.
     .build();
 
   try {
