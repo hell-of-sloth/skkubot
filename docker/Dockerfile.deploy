@@ -1,0 +1,59 @@
+# 첫 번째 스테이지: Python 이미지를 사용하여 필요한 파일 준비
+FROM --platform=linux/amd64 python:3.10.5-slim-buster as python-base
+
+# TODO: continue to write this dockerfile for deployment
+FROM --platform=linux/amd64 ubuntu:22.04
+# change apt repository source due to bottleneck of network (#20)
+RUN sed -i 's/archive.ubuntu.com/ftp.kaist.ac.kr/g' /etc/apt/sources.list
+RUN sed -i 's/security.ubuntu.com/ftp.kaist.ac.kr/g' /etc/apt/sources.list
+# for arm64 apt repository
+RUN sed -i 's/ports.ubuntu.com/ftp.kaist.ac.kr/g' /etc/apt/sources.list
+
+# declare and set environment variables
+ARG NODE_VERSION=20.x
+# set frontend to noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
+
+# install curl, ca-certificates and gnupg to use nodejs install script
+# install software-properties-common and wget to install python3
+RUN apt-get -y update --no-install-recommends \
+    && apt-get -y install --no-install-recommends \
+    build-essential \
+    curl \
+    ca-certificates \
+    apt-utils \
+    gnupg \
+    dialog \
+    git \
+    vim \
+    software-properties-common \
+    wget \
+    && apt-get autoremove -y \
+    && apt-get clean -y
+
+# install nodejs
+RUN curl -fsSL https://deb.nodesource.com/setup_${NODE_VERSION} | bash - \
+    && apt-get -y install --no-install-recommends nodejs \
+    && apt-get autoremove -y \
+    && apt-get clean -y
+
+# install python3
+# SSL 라이브러리 복사
+COPY --from=python-base /usr/lib/x86_64-linux-gnu/libssl.so.1.1 /usr/lib/x86_64-linux-gnu/
+COPY --from=python-base /usr/lib/x86_64-linux-gnu/libcrypto.so.1.1 /usr/lib/x86_64-linux-gnu/
+
+
+# 첫 번째 스테이지에서 Python 복사
+COPY --from=python-base /usr/local /usr/local
+
+# Python 환경 변수 설정
+ENV PATH="/usr/local/bin:$PATH"
+ENV LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu:/usr/local/lib
+
+# set python3.10 as default python3
+RUN update-alternatives --install /usr/bin/python python /usr/local/bin/python3.10 1 \
+    && update-alternatives --install /usr/bin/python3 python3 /usr/local/bin/python3.10 1 \
+    && update-alternatives --install /usr/bin/pip3 pip3 /usr/local/bin/pip3.10 1
+
+# set frontend to dialog
+ENV DEBIAN_FRONTEND=dialog
