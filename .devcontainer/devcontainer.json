@@ -25,6 +25,9 @@
   ],
   "customizations": {
     "vscode": {
+      "settings": {
+        "extensions.verifySignature": false
+      },
       "extensions": [
         "bruno-api-client.bruno",
         "dbaeumer.vscode-eslint",
