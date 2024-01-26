@@ -129,5 +129,7 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
-# exclude files in scrapper/download/ 
+# exclude files in scrapper/download/
+# exclude files in scrapper/txt_files/
 scrapper/download/*
+scrapper/txt_files/*

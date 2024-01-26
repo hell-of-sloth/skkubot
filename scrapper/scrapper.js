@@ -1,5 +1,15 @@
 const { Builder, By, Key, until } = require("selenium-webdriver");
 const chrome = require("selenium-webdriver/chrome");
+const fs = require('fs');
+const path = require('path');
+
+// 현재 작업 디렉토리에 'download' 디렉토리의 경로를 생성합니다.
+const downloadDir = path.join(__dirname, 'download');
+
+// 'download' 디렉토리가 존재하는지 확인하고, 없으면 생성합니다.
+if (!fs.existsSync(downloadDir)){
+    fs.mkdirSync(downloadDir);
+}
 
 const run = async () => {
   // headless로 크롬 드라이버 실행
@@ -8,14 +18,17 @@ const run = async () => {
     .setChromeOptions(
       new chrome.Options()
         .headless()
-        .addArguments("--disable-gpu", "window-size=1920x1080", "lang=ko_KR")
+        // "--no-sandbox", "--disable-dev-shm-usage" 옵션은 리눅스 환경에서 필요한 옵션입니다.
+        .addArguments("--disable-gpu", "window-size=1920x1080", "lang=ko_KR", "--no-sandbox", "--disable-dev-shm-usage")
+        .setUserPreferences({ 'download.default_directory': downloadDir })
     )
+    .setChromeService(new chrome.ServiceBuilder('/bin/chromedriver')) // WSL에서 chromedriver 경로를 지정해줍니다.
     .build();
 
   try {
     // 특정 URL 생성
     await driver.get(
-      "https://www.skku.edu/skku/campus/skk_comm/notice01.do?mode=list&&articleLimit=10&article.offset=0"
+      "https://www.skku.edu/skku/campus/skk_comm/notice01.do?mode=list&&articleLimit=10&article.offset=10"
     );
     let userAgent = await driver.executeScript("return navigator.userAgent;");
     console.log("[UserAgent]: ", userAgent);
@@ -47,7 +60,65 @@ const run = async () => {
       const url = await aTagElement.getAttribute("href");
       urls.push(url);
     }
-    // TODO: promise.all로 병렬처리를 하면 더 효율적으로 처리할 수 있음.
+
+    // Promise.allSettled를 사용하여 모든 Promise가 처리될 때까지 기다린다.
+
+    // *************현재 문제 발생으로 인하여 보류*************
+
+    // Promise.allSettled(urls.map(async (url) => {
+    //   await driver.get(url);
+    //   await driver.wait(until.elementLocated(By.css("div.container")), 10000);
+
+    //   const boardElement = await driver.findElement(
+    //     By.css("dl.board-write-box.board-write-box-v03")
+    //   );
+    //   try { // 기본 양식
+    //     const contentText = await boardElement
+    //       .findElement(By.css("dd"))
+    //       .findElement(By.css("pre.pre"))
+    //       .getText();
+    //     console.log("내용: " + contentText);
+    //   } catch (e) { // 기본양식이 아닐 경우
+    //     const contentTextList = await driver.findElement(By.css("div.fr-view"))
+    //       .findElements(By.css("p"))
+    //     console.log("내용: ");
+    //     Promise.allSettled(contentTextList.map(async (contentText) => {
+    //       console.log(await contentText.getText());
+    //     }));
+    //   }
+      
+    //   // 파일 다운로드
+    //   const fileElement = await driver.findElement(By.css("a.file"));
+    //   const isFileExist = await fileElement
+    //     .findElement(By.css("span"))
+    //     .getText();
+      
+    //   // 파일이 존재하면 다운로드
+    //   if (isFileExist != "( 0 )") {
+    //     fileElement.click();
+
+    //     // 압축으로 다운 받기
+    //     /*
+    //     const downloadElement = await driver.findElement(By.css("ul.filedown_btnList"))
+    //       .findElement(By.css("li"))
+    //       .findElement(By.css("button"));
+    //     await downloadElement.click();
+    //     */
+
+    //     // 파일 하나씩 다운 받기
+    //     const downloadElements = await driver.findElement(By.css("ul.filedown_list"))
+    //       .findElements(By.css("li"));
+    //     for (let content of downloadElements) {
+    //       await content.findElement(By.css("a")).click();
+    //     }
+    //   }
+    // })).then((result) => {
+    //   console.log(result);
+    // }).catch((e) => {
+    //   console.log(e);
+    // });
+
+    // 기존 방식
     for (let url of urls) {
       await driver.get(url);
       await driver.wait(until.elementLocated(By.css("div.container")), 10000);
@@ -55,11 +126,46 @@ const run = async () => {
       const boardElement = await driver.findElement(
         By.css("dl.board-write-box.board-write-box-v03")
       );
-      const contentText = await boardElement
-        .findElement(By.css("dd"))
-        .findElement(By.css("pre.pre"))
+      try { // 기본 양식
+        const contentText = await boardElement
+          .findElement(By.css("dd"))
+          .findElement(By.css("pre.pre"))
+          .getText();
+        console.log("내용: " + contentText);
+      } catch (e) { // 기본양식이 아닐 경우
+        const contentTextList = await driver.findElement(By.css("div.fr-view"))
+          .findElements(By.css("p"))
+        console.log("내용: ");
+        Promise.allSettled(contentTextList.map(async (contentText) => {
+          console.log(await contentText.getText());
+        }));
+      }
+      
+      // 파일 다운로드
+      const fileElement = await driver.findElement(By.css("a.file"));
+      const isFileExist = await fileElement
+        .findElement(By.css("span"))
         .getText();
-      console.log("내용: " + contentText);
+      
+      // 파일이 존재하면 다운로드
+      if (isFileExist != "( 0 )") {
+        fileElement.click();
+
+        // 압축으로 다운 받기
+        /*
+        const downloadElement = await driver.findElement(By.css("ul.filedown_btnList"))
+          .findElement(By.css("li"))
+          .findElement(By.css("button"));
+        await downloadElement.click();
+        */
+
+        // 파일 하나씩 다운 받기
+        const downloadElements = await driver.findElement(By.css("ul.filedown_list"))
+          .findElements(By.css("li"));
+        for (let content of downloadElements) {
+          await content.findElement(By.css("a")).click();
+        }
+      }
     }
   } catch (e) {
     console.log(e);
@@ -67,4 +173,5 @@ const run = async () => {
     driver.quit();
   }
 };
+
 run();
