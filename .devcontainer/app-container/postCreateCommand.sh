@@ -8,6 +8,6 @@ sudo unzip chromedriver-linux64.zip;
 sudo mv /tmp/chromedriver-linux64/chromedriver /usr/bin/chromedriver
 chromedriver --version
 python3 --version;
-cd /workspaces/skkubot/;
+cd /workspace/app/;
 pip3 install -r requirements.txt;
 npm ci;
