@@ -1,10 +1,10 @@
 # 첫 번째 스테이지: Python 이미지를 사용하여 필요한 파일 준비
-FROM --platform=linux/amd64 python:3.10.5-slim-buster as python-base
+ARG PYTHON_VERSION=3.10.5
+FROM --platform=linux/amd64 python:${PYTHON_VERSION}-slim-buster as python-base
 
 # 두 번째 스테이지: 최종 이미지 생성
 FROM --platform=linux/amd64 mcr.microsoft.com/devcontainers/base:ubuntu-22.04
 
-ARG PYTHON_VERSION=3.10.5
 # change apt repository source due to bottleneck of network (#20)
 RUN sed -i 's/archive.ubuntu.com/ftp.kaist.ac.kr/g' /etc/apt/sources.list
 RUN sed -i 's/security.ubuntu.com/ftp.kaist.ac.kr/g' /etc/apt/sources.list
