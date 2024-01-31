@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Skkubot!</h1>
+    <form action="/add-to-db" method="post">
+        <label for="filename">DB 추가(scrapper 폴더에 있는 TXT파일 상대 경로 입력):</label>
+        <input type="text" id="filename" name="filename" required>
+        <button type="submit">Submit</button>
+    </form>
+    <form action="/question" method="post">
+        <label for="question">Enter Question:</label>
+        <input type="text" id="question" name="question" required>
+        <button type="submit">Submit</button>
+    </form>
+    <hr>
+    <h1>Chatbot Response</h1>
+    <p>Question: <%= question %></p>
+    <p>Answer: <%= answer %></p>
+    <form action="/deleteDB" method="post">
+        <button type="submit", style="background:red">DELETE DB</button>
+    </form>
+    <h3>db 내용 보고 싶으면 app file의 chromatest.js 실행</h3>
+    <h1 style="color: red;">컨테이너 자동으로 안꺼지니 알아서 dockerdesktop에서 끄세용</h1>
+</body>
+</html>

@@ -133,7 +133,5 @@ dist
 # exclude files in scrapper/txt_files/
 scrapper/download/*
 scrapper/txt_files/*
-
-# Ignore pnpm store directories
-.pnpm-store
-.pnpm
+# .pnpm-store
+.pnpm-store/*
