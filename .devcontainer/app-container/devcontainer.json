@@ -2,7 +2,8 @@
   "name": "app",
   "dockerComposeFile": ["../../docker-compose.yml"],
   "service": "app",
-  "shutdownAction": "none",
+  "shutdownAction": "none", //도커 자동으로 꺼지게 하고 싶으면 주석 처리
+  "forwardPorts": [3000],
   "workspaceFolder": "/workspace/app",
   "features": {
     "ghcr.io/devcontainers/features/node:1": {

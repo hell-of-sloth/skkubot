@@ -20,6 +20,8 @@ services:
       - .:/workspace:cached
     command: sleep infinity
     container_name: skkubot-devcontainer
+    ports:
+      - 3000:3000
     # ...
   chroma:
     image: ghcr.io/chroma-core/chroma:latest

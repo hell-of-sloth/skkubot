@@ -13,11 +13,7 @@ const { TextLoader } = require("langchain/document_loaders/fs/text");
 const client = new ChromaClient({
   path: "http://chroma:8000",
 });
-// const embedder = new OpenAIEmbeddingFunction({
-//   openai_api_key: "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",
-// });
 
-// await client.deleteCollection({name: "skkubot"})
 async function findcollections() {
   const collections = await client.listCollections();
   console.log(collections);
