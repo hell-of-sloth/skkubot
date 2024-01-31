@@ -1,0 +1,30 @@
+{
+  "name": "app",
+  "dockerComposeFile": ["../../docker-compose.yml"],
+  "service": "app",
+  "shutdownAction": "none", //도커 자동으로 꺼지게 하고 싶으면 주석 처리
+  "forwardPorts": [3000],
+  "workspaceFolder": "/workspace/app",
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "20.11.0"
+    }
+  },
+  "postCreateCommand": "chmod +x /workspace/.devcontainer/app-container/postCreateCommand.sh && /workspace/.devcontainer/app-container/postCreateCommand.sh",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "extensions.verifySignature": false
+      },
+      "extensions": [
+        "bruno-api-client.bruno",
+        "dbaeumer.vscode-eslint",
+        "eamodio.gitlens",
+        "editorconfig.editorconfig",
+        "esbenp.prettier-vscode",
+        "ms-azuretools.vscode-docker"
+      ]
+    }
+  }
+
+}
