@@ -14,4 +14,3 @@ cd /workspaces/skkubot/;
 pip3 install -r requirements.txt;
 npm install -g pnpm@${PNPM_VERSION};
 npm install -g @nestjs/cli@${NESTJS_VERSION};
-pnpm install 
