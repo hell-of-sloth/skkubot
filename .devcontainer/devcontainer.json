@@ -1,21 +1,21 @@
 {
-  "name": "app",
-  "dockerComposeFile": ["../../docker-compose.yml"],
-  "service": "app",
+  "name": "skkubot",
+  "dockerComposeFile": ["../docker-compose.yml"],
+  "service": "skkubot",
   "shutdownAction": "none", //도커 자동으로 꺼지게 하고 싶으면 주석 처리
   "forwardPorts": [3000],
-  "workspaceFolder": "/workspace/app",
+  "workspaceFolder": "/workspace",
   "features": {
     "ghcr.io/devcontainers/features/node:1": {
       "version": "20.11.0"
     }
   },
-  "postCreateCommand": "chmod +x /workspace/.devcontainer/app-container/postCreateCommand.sh && /workspace/.devcontainer/app-container/postCreateCommand.sh",
+  "postCreateCommand": "chmod +x /workspace/.devcontainer/postCreateCommand.sh && /workspace/.devcontainer/postCreateCommand.sh",
   "customizations": {
     "vscode": {
       "settings": {
         "extensions.verifySignature": false
-      },
+      }, 
       "extensions": [
         "bruno-api-client.bruno",
         "dbaeumer.vscode-eslint",
