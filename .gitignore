@@ -133,5 +133,7 @@ dist
 # exclude files in scrapper/txt_files/
 app/scrapper/download
 app/scrapper/txt_files
+backend/src/scrapper/download
+backend/src/scrapper/txt_files
 # .pnpm-store
 .pnpm-store/* 

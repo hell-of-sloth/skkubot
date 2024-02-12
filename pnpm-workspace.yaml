@@ -1,3 +1,4 @@
 packages:
-  - "backend/*"
-  - "frontend/*"
+  - "app/**"
+  - "backend/**"
+  - "frontend/**"
