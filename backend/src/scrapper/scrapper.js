@@ -6,9 +6,15 @@ const path = require('path');
 // 현재 작업 디렉토리에 'download' 디렉토리의 경로를 생성합니다.
 const downloadDir = path.join(__dirname, 'download');
 
+const txtDir = path.join(__dirname, 'txt_files');
+
 // 'download' 디렉토리가 존재하는지 확인하고, 없으면 생성합니다.
 if (!fs.existsSync(downloadDir)){
-    fs.mkdirSync(downloadDir);
+  fs.mkdirSync(downloadDir);
+}
+
+if(!fs.existsSync(txtDir)){
+  fs.mkdirSync(txtDir);
 }
 
 const run = async () => {
@@ -117,6 +123,8 @@ const run = async () => {
     //   console.log(e);
     // });
 
+    
+
     // 기존 방식
     for (let url of urls) {
       await driver.get(url);
@@ -125,18 +133,23 @@ const run = async () => {
       const boardElement = await driver.findElement(
         By.css("dl.board-write-box.board-write-box-v03")
       );
+      const title = await driver.findElement(
+        By.css("em.ellipsis")
+      ).getText();
       try { // 기본 양식
         const contentText = await boardElement
           .findElement(By.css("dd"))
           .findElement(By.css("pre.pre"))
           .getText();
         console.log("내용: " + contentText);
+        fs.writeFileSync(path.join(txtDir, `${title}.txt`), contentText);
       } catch (e) { // 기본양식이 아닐 경우
         const contentTextList = await driver.findElement(By.css("div.fr-view"))
           .findElements(By.css("p"))
         console.log("내용: ");
         Promise.allSettled(contentTextList.map(async (contentText) => {
           console.log(await contentText.getText());
+          fs.appendFileSync(path.join(txtDir, `${title}.txt`), await contentText.getText());
         }));
       }
       

@@ -30,8 +30,7 @@ const model = new ChatOpenAI({
 let vectorStore;
 
 async function initvectordb(userinput) {
-  //vectorDB에 들어갈 txt 파일 경로 변수로 받음
-  // Create docs with a loader
+  
   const loader = new TextLoader(userinput);
   const docs = await loader.load();
 
