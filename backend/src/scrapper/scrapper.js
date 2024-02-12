@@ -2,6 +2,7 @@ const { Builder, By, Key, until } = require("selenium-webdriver");
 const chrome = require("selenium-webdriver/chrome");
 const fs = require('fs');
 const path = require('path');
+const { timeEnd } = require("console");
 
 // 현재 작업 디렉토리에 'download' 디렉토리의 경로를 생성합니다.
 const downloadDir = path.join(__dirname, 'download');
@@ -33,7 +34,7 @@ const run = async () => {
   try {
     // 특정 URL 생성
     await driver.get(
-      "https://www.skku.edu/skku/campus/skk_comm/notice01.do?mode=list&&articleLimit=10&article.offset=10"
+      "https://www.skku.edu/skku/campus/skk_comm/notice01.do?mode=list&&articleLimit=10&article.offset=0"
     );
     let userAgent = await driver.executeScript("return navigator.userAgent;");
     console.log("[UserAgent]: ", userAgent);
@@ -133,9 +134,12 @@ const run = async () => {
       const boardElement = await driver.findElement(
         By.css("dl.board-write-box.board-write-box-v03")
       );
-      const title = await driver.findElement(
+      let title = await driver.findElement(
         By.css("em.ellipsis")
-      ).getText();
+      ).getText()
+
+      title = title.substring(0, 30);
+      
       try { // 기본 양식
         const contentText = await boardElement
           .findElement(By.css("dd"))
@@ -144,6 +148,7 @@ const run = async () => {
         console.log("내용: " + contentText);
         fs.writeFileSync(path.join(txtDir, `${title}.txt`), contentText);
       } catch (e) { // 기본양식이 아닐 경우
+        console.log(e);
         const contentTextList = await driver.findElement(By.css("div.fr-view"))
           .findElements(By.css("p"))
         console.log("내용: ");
