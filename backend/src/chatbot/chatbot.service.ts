@@ -25,8 +25,6 @@ export class ChatbotService {
         openAIApiKey: this.apiKey,
     });
 
-    vectorStore;
-
     async startvectordb(userinput: string): Promise<void> {
         //vectorDB에 들어갈 txt 파일 경로 변수로 받음
         // Create docs with a loader
@@ -34,7 +32,7 @@ export class ChatbotService {
         const docs = await loader.load();
 
         // Create a new vector store and index the docs
-        this.vectorStore = await Chroma.fromDocuments(docs, new OpenAIEmbeddings(), {
+        await Chroma.fromDocuments(docs, new OpenAIEmbeddings(), {
             //collection이 없으면 생성 있으면 추가해줌
             collectionName: "skkubot",
             url: "http://chroma:8000",
@@ -45,6 +43,11 @@ export class ChatbotService {
     } //결국 scrapper로 각 공지사항 TXT파일로 만들어서 이 함수 반복해서 돌리는 것도 방법일듯
 
     async askAI(userinput: string): Promise<string> {
+        const vectorStore = await Chroma.fromExistingCollection(
+            new OpenAIEmbeddings(),
+            { collectionName: "skkubot" }
+          );
+
         const prompt =
             PromptTemplate.fromTemplate(`Answer the question based only on the following context:
             {context}
@@ -54,7 +57,7 @@ export class ChatbotService {
 
         const chain = RunnableSequence.from([
             {
-                context: this.vectorStore.asRetriever().pipe(serializeDocs),
+                context: vectorStore.asRetriever().pipe(serializeDocs),
                 question: new RunnablePassthrough(),
             },
             prompt,
