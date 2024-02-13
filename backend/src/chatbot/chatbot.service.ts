@@ -22,6 +22,7 @@ export class ChatbotService {
     });
 
     model = new ChatOpenAI({
+        modelName:"gpt-3.5-turbo-0125",
         openAIApiKey: this.apiKey,
     });
 
@@ -45,7 +46,10 @@ export class ChatbotService {
     async askAI(userinput: string): Promise<string> {
         const vectorStore = await Chroma.fromExistingCollection(
             new OpenAIEmbeddings(),
-            { collectionName: "skkubot" }
+            { collectionName: "skkubot",
+            url: "http://chroma:8000",
+            collectionMetadata: {
+            "hnsw:space": "cosine", }}
           );
 
         const prompt =
