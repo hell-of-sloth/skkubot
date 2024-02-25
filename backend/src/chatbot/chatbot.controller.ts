@@ -5,7 +5,7 @@ import { questionDto } from './dto/question.dto';
 
 @Controller('chatbot')
 export class ChatbotController {
-    constructor(private chatbotService: ChatbotService) { }
+    constructor(private chatbotService: ChatbotService) {}
 
     @Get()
     getChatbot(): void {
@@ -16,7 +16,7 @@ export class ChatbotController {
     postVectorDB(@Body() adddbdto: addDBDto): Promise<void> {
         const { filename } = adddbdto;
         console.log(filename);
-        return this.chatbotService.startvectordb(filename);
+        return this.chatbotService.testaddvectordb(filename);
     }
 
     @Post('question')
