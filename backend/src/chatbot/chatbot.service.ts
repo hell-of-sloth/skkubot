@@ -62,10 +62,7 @@ export class ChatbotService {
         //     input_document: text,
         // });
         //version 2
-        const text = fs.readFileSync(
-            'src/scrapper/txt_files/2024학년.txt', // 이부분을 userinput으로 받아서 돌리면 될듯
-            'utf8',
-        );
+        const text = fs.readFileSync(userinput, 'utf8');
 
         const prompt = PromptTemplate.fromTemplate(
             `
