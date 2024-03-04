@@ -1,7 +1,8 @@
-import { Body, Controller, Delete, Get, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Post, Sse } from '@nestjs/common';
 import { ChatbotService } from './chatbot.service';
 import { addDBDto } from './dto/addDB.dto';
 import { questionDto } from './dto/question.dto';
+import { Observable, fromEvent, interval, pipe } from 'rxjs';
 
 @Controller('chatbot')
 export class ChatbotController {
@@ -29,5 +30,12 @@ export class ChatbotController {
     @Delete('resetDB')
     deleteResetDB(): Promise<void> {
         return this.chatbotService.resetDB();
+    }
+
+    @Sse('sse')
+    sseChatbot(@Body() questiondto: questionDto): Observable<string> {
+        const { question } = questiondto;
+        console.log(question);
+        return this.chatbotService.askAIsse(question);
     }
 }

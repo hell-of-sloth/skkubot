@@ -7,6 +7,7 @@ import { PromptTemplate } from '@langchain/core/prompts';
 import { RunnableSequence, RunnablePassthrough } from '@langchain/core/runnables';
 import { StringOutputParser } from '@langchain/core/output_parsers';
 import { ConfigService } from '@nestjs/config';
+import { Observable } from 'rxjs';
 
 // require("dotenv").config(); nestjs에서는 @nestjs/config를 사용하여 환경변수를 설정하는 것을 권장
 
@@ -27,6 +28,7 @@ export class ChatbotService {
 
     vectorStore;
 
+    // ChromaDB에 벡터 넣기
     async startvectordb(userinput: string): Promise<void> {
         //vectorDB에 들어갈 txt 파일 경로 변수로 받음
         // Create docs with a loader
@@ -44,6 +46,7 @@ export class ChatbotService {
         });
     } //결국 scrapper로 각 공지사항 TXT파일로 만들어서 이 함수 반복해서 돌리는 것도 방법일듯
 
+    // 질문 하기
     async askAI(userinput: string): Promise<string> {
         const prompt =
             PromptTemplate.fromTemplate(`Answer the question based only on the following context:
@@ -68,6 +71,36 @@ export class ChatbotService {
         return result;
     }
 
+    // 질문 하기
+    askAIsse(userinput: string): Observable<string> {
+        const prompt =
+            PromptTemplate.fromTemplate(`Answer the question based only on the following context:
+            {context}
+            Question: {question}`);
+    
+        const serializeDocs = (docs) => docs.map((doc) => doc.pageContent).join("\n");
+    
+        const chain = RunnableSequence.from([
+            {
+                context: this.vectorStore.asRetriever().pipe(serializeDocs),
+                question: new RunnablePassthrough(),
+            },
+            prompt,
+            this.model,
+            new StringOutputParser(),
+        ]);
+    
+        return new Observable(observer => {
+            chain.stream(userinput).then(async (sse_result) => {
+                for await (const chunk of sse_result) {
+                    observer.next(chunk);
+                }
+                observer.complete();
+            }).catch(err => observer.error(err));
+        });
+    }
+
+    // chromaDB 초기화
     async resetDB(): Promise<void> {
         await this.client.deleteCollection({ name: "skkubot" });
         const collections = await this.client.listCollections();
